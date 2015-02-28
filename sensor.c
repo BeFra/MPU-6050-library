@@ -16,6 +16,7 @@
 
 #define ACCELEROMETER_RANGE ACCELEROMETER_RANGE_2G
 #define GYROSCOPE_RANGE GYROSCOPE_RANGE_250
+#define RAD_TO_DEG 57.295779513082320876798154814105
 
 unsigned long  timeStamp;
 float last_filtert_analge_x;
@@ -49,18 +50,23 @@ void send_sensor_data(uint8_t adr, uint8_t reg, uint8_t data) {
 }
 
 void init_sensor() {
-	send_sensor_data(ADR_MPU,0x6B,0x80); //Power Management: Reset
-	_delay_ms(30); //Wait for Reset
+	/* Power Management -> reset */
+	send_sensor_data(ADR_MPU,0x6B,0x80);
+	/* wait for reset */
+	_delay_ms(30);
 
-	send_sensor_data(ADR_MPU,0x6B,0x00); /*no sleep*/
+	/*no sleep*/
+	send_sensor_data(ADR_MPU,0x6B,0x00); 
 	_delay_ms(10); /*Wait for Reset*/
 	/*disable output to FIFO buffer*/
 	send_sensor_data(ADR_MPU,0x6A,0x88);
 	/*sample rate*/
 	//send_sensor_data(ADR_MPU,0x19,0x01);
 
-	send_sensor_data(ADR_MPU,0x6B,0x03); /*Power Management: GyroZ PLL Reference*/
-	send_sensor_data(ADR_MPU,0x1A,0x00); /*Configuration: Low-Pass: 256Hz*/
+	/* Power Management: GyroZ PLL Reference */
+	send_sensor_data(ADR_MPU,0x6B,0x03); 
+	/* Configuration: Low-Pass: 256Hz */
+	send_sensor_data(ADR_MPU,0x1A,0x00); 
 	/* ACCEL_CONFIG */
 	send_sensor_data(ADR_MPU,0x1C,ACCELEROMETER_RANGE); 
 	/* GYRO_CONFIG */
@@ -222,15 +228,14 @@ void calibrate_accelerometer() {
  */
 void get_angles() {
 	unsigned long t_now;// = get	
-	const float RADIANS_TO_DEGREES = 57.2958; //180/3.14159
 	float gyro[3];
 	float acc[3];
 	get_gyro(gyro);
 	get_acc(acc);
 	
-	float acc_angle_x = atan(acc[X] / sqrt(pow(acc[Y],2) + pow(acc[Z],2))) * RADIANS_TO_DEGREES;
-	float acc_angle_y = atan(acc[Y] / sqrt(pow(acc[X],2) + pow(acc[Z],2))) * RADIANS_TO_DEGREES;
-	float acc_angle_z = atan(sqrt(pow(acc[X],2) + pow(acc[Y],2)) / acc[Z]) * RADIANS_TO_DEGREES;
+	float acc_angle_x = atan(acc[X] / sqrt(pow(acc[Y],2) + pow(acc[Z],2))) * RAD_TO_DEG;
+	float acc_angle_y = atan(acc[Y] / sqrt(pow(acc[X],2) + pow(acc[Z],2))) * RAD_TO_DEG;
+	float acc_angle_z = atan(sqrt(pow(acc[X],2) + pow(acc[Y],2)) / acc[Z]) * RAD_TO_DEG;
 	
 	/*filtered gyro angles */
 	float dt = t_now - get_last_time(); // TODO must be implemented

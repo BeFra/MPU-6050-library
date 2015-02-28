@@ -17,16 +17,6 @@ float acc[3];
 int16_t gyro_base[3];
 int16_t acc_base[3];
 
-struct mpu_data {
-	int16_t gyro_x;
-	int16_t gyro_y;
-	int16_t gyro_z;
-	int16_t acc_x;
-	int16_t acc_Y;
-	int16_t acc_z;
-	}mpu_base;
-
-
 /* Adress of the MPU6050 */
 #define ADR_MPU 0x68
 
