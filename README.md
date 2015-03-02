@@ -40,7 +40,7 @@ roll:  alpha = arctan( Ax / sqrt( (Ay)^2 + (Az)^2)),
 pitch: beta = arctan( Ay / sqrt( (Ax)^2 + (Az)^2)) and finally   
 yaw:   theta = arctan( sqrt( (Ax)^2 + (Ay)^2) / Az ).   
 
-To calculate the angles roll, pitch and yaw with the gyro data we need the time between two requests of the gyro data, because the gyro sensor measures the rotational motion
+To calculate the angles roll, pitch and yaw with the gyro data we need the time between two requests of the gyro data, because the gyro sensor measures the rotational motion    
 roll = Ax * dt * last_gyro_x_angle,   
 ptich = Ay * dt * last_gyro_y_angle,   
 yaw = Az * dt * last_gyro_z_angle     
