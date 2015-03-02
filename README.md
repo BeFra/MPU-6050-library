@@ -26,7 +26,13 @@ For #define GYROSCOPE_RANGE:
 |GYROSCOPE_RANGE_2000|-/+2000°/s|16.4 LSB/°/s|
 
 
-The methods _"void get_acc_raw(int16_t* data)"_ and *"void get_gyro_raw(int16_t* data"* write the raw data of the Accelerometer or Gyro to the 3 * 16 Bit array data. For each axis there are two registers which were only 8 Bit wide so each entry in the array must be 16 Bit wide.
-The methods *"void get_acc(float* data)"* and *"void get_gyro(float* data)"* write the convertet data of the Accelerometer or Gyro to the 3 * 16 Bit array data.
+The methods _"void get_acc_raw(int16_t* data)"_ and _"void get_gyro_raw(int16_t* data")_ write the raw data of the Accelerometer or Gyro to the 3 * 16 Bit array data. For each axis there are two registers which were only 8 Bit wide so each entry in the array must be 16 Bit wide.
+The methods _"void get_acc(float* data)"_ and _"void get_gyro(float* data)"_ write the convertet data of the Accelerometer or Gyro to the 3 * 16 Bit array data.
 
-*"int16_t get_temperature_raw()"* return the raw value of the temperature sensor. The method *"float get_temperature()"* return the converted temperauture value.
+_"int16_t get_temperature_raw()"_ return the raw value of the temperature sensor. The method _"float get_temperature()"_ return the converted temperauture value.
+
+
+
+Links:
+[MPU-6000 and MPU-6050 Register Map and Descriptions Revision 4.0] (http://www.invensense.com/mems/gyro/documents/RM-MPU-6000A.pdf)
+http://www.invensense.com/mems/gyro/documents/PS-MPU-6000A-00v3.4.pdf
