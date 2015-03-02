@@ -26,7 +26,7 @@ For #define GYROSCOPE_RANGE:
 |GYROSCOPE_RANGE_2000|-/+2000°/s|16.4 LSB/°/s|
 
 
-The methods *"void get_acc_raw(int16_t* data)"* and *"void get_gyro_raw(int16_t* data"* write the raw data of the Accelerometer or Gyro to the 3 * 16 Bit array data. For each axis there are two registers which were only 8 Bit wide so each entry in the array must be 16 Bit wide.
+The methods _"void get_acc_raw(int16_t* data)"_ and *"void get_gyro_raw(int16_t* data"* write the raw data of the Accelerometer or Gyro to the 3 * 16 Bit array data. For each axis there are two registers which were only 8 Bit wide so each entry in the array must be 16 Bit wide.
 The methods *"void get_acc(float* data)"* and *"void get_gyro(float* data)"* write the convertet data of the Accelerometer or Gyro to the 3 * 16 Bit array data.
 
 *"int16_t get_temperature_raw()"* return the raw value of the temperature sensor. The method *"float get_temperature()"* return the converted temperauture value.
