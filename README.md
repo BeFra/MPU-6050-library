@@ -31,8 +31,11 @@ The methods _"void get_acc(float* data)"_ and _"void get_gyro(float* data)"_ wri
 
 _"int16_t get_temperature_raw()"_ return the raw value of the temperature sensor. The method _"float get_temperature()"_ return the converted temperauture value.
 
+To calibrate the Sensor there are two methods for Gyro and Accelerometer -void calibrate_gyroscope()_ and _void calibrate_accelerometer()_  they read x times the raw values and build the average of the values.
 
+The method _get_angles()_ returns the angles of all three Axis x, y, z The Gyro and Accelerometer values are fused with the complementary filter.
 
 Links:
 [MPU-6000 and MPU-6050 Register Map and Descriptions Revision 4.0] (http://www.invensense.com/mems/gyro/documents/RM-MPU-6000A.pdf)
-http://www.invensense.com/mems/gyro/documents/PS-MPU-6000A-00v3.4.pdf
+[MPU-6000 and MPU-6050 Product Specification Revision 3.4]
+(http://www.invensense.com/mems/gyro/documents/PS-MPU-6000A-00v3.4.pdf)
