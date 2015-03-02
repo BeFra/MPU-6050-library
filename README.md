@@ -3,8 +3,7 @@
 This library provides methods for the communication with an MPU-6050 Six-Axis (Gyro + Accelerometer) 
 MEMS MotionTracking Sensor.
 
-With the #define ACCELEROMETER_RANGE and #define GYROSCOPE_RANGE the range of the Gyro and Accelerometer measurement
-could be defined.
+With the *#define ACCELEROMETER_RANGE* and *#define GYROSCOPE_RANGE* the range of the Gyro and Accelerometer measurement could be defined.
     
 For #define ACCELEROMETER_RANGE:
 
@@ -27,7 +26,7 @@ For #define GYROSCOPE_RANGE:
 |GYROSCOPE_RANGE_2000|-/+2000°/s|16.4 LSB/°/s|
 
 
-The methods "void get_acc_raw(int16_t* data)" and "void get_gyro_raw(int16_t* data" write the raw data of the Accelerometer or Gyro to the 3 * 16 Bit array data. For each axis there are two registers which were only 8 Bit wide so each entry in the array must be 16 Bit wide.
-The methods "void get_acc(float* data)" and "void get_gyro(float* data)" write the convertet data of the Accelerometer or Gyro to the 3 * 16 Bit array data.
+The methods *"void get_acc_raw(int16_t* data)"* and *"void get_gyro_raw(int16_t* data"* write the raw data of the Accelerometer or Gyro to the 3 * 16 Bit array data. For each axis there are two registers which were only 8 Bit wide so each entry in the array must be 16 Bit wide.
+The methods *"void get_acc(float* data)"* and *"void get_gyro(float* data)"* write the convertet data of the Accelerometer or Gyro to the 3 * 16 Bit array data.
 
-"int16_t get_temperature_raw()" returns the raw value of the temperature sensor. The "float get_temperature()" return the converted temperauture value.
+*"int16_t get_temperature_raw()"* return the raw value of the temperature sensor. The method *"float get_temperature()"* return the converted temperauture value.
