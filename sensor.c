@@ -4,10 +4,10 @@
  * Created: 03.11.2014 16:41:50
  *  Author: befrank
  */ 
-#include "header/i2c.h"
-#include "header/sensor.h"
-#include "utils/print.h"
-#include "time/time.h"
+#include "../i2c/i2c.h"
+#include "../utils/print.h"
+#include "../time/time.h"
+#include "sensor.h"
 #include <stdint.h>
 #include <math.h>
 #include <stdio.h>
@@ -21,14 +21,12 @@
 #define GYROSCOPE_RANGE GYROSCOPE_RANGE_250
 #define RAD_TO_DEG 57.295779513082320876798154814105
 
-void set_angle_data(unsigned long time, float x_angle, float y_angle, float z_angle, float x_gyro_angle, float y_gyro_angle, float z_gyro_angle );
+void set_angle_data(unsigned long time, float x_angle, float y_angle, float z_angle);
 inline unsigned long get_last_time();
 inline float get_last_filtert_x_angle();
 inline float get_last_filtert_y_angle();
 inline float get_last_filtert_z_angle();
-inline float get_last_gyro_x_angle();
-inline float get_last_gyro_y_angle();
-inline float get_last_gyro_z_angle();
+
 
 unsigned long  timeStamp;
 float last_filtert_analge_x;
@@ -62,6 +60,9 @@ void send_sensor_data(uint8_t adr, uint8_t reg, uint8_t data) {
 }
 
 void init_sensor() {
+	/* init i2c bus */
+	init_i2c(); 
+	
 	send_sensor_data(ADR_MPU,0x6B,0x80); //Power Management: Reset
 	_delay_ms(30); //Wait for Reset
 
@@ -83,7 +84,7 @@ void init_sensor() {
 	calibrate_accelerometer();
 	calibrate_gyroscope();
 	
-	set_angle_data(0,0,0,0,0,0,0);
+	set_angle_data(get_millis(),0,0,0);
 }
 
 /*
@@ -106,9 +107,9 @@ void get_acc(float* data) {
 	int16_t tmp[3];
 	get_acc_raw(tmp);
 	if(ACCELEROMETER_RANGE == ACCELEROMETER_RANGE_2G) {
-		 data[X]=(float) (tmp[X]- acc_base[X]) / 16384.0;
-		 data[Y]=(float) (tmp[Y]- acc_base[Y]) / 16384.0;
-		 data[Z]=(float) (tmp[Z]- acc_base[Z]) / 16384.0;
+		 data[X]=(float) (tmp[X]- acc_base[X]);// / 16384.0;
+		 data[Y]=(float) (tmp[Y]- acc_base[Y]);// / 16384.0;
+		 data[Z]=(float) (tmp[Z]- acc_base[Z]);// / 16384.0;
 	}
 	if(ACCELEROMETER_RANGE == ACCELEROMETER_RANGE_4G) {
         data[X]=(float) (tmp[X]- acc_base[X]) / 8192.0;
@@ -150,9 +151,9 @@ void get_gyro(float* data) {
 	get_gyro_raw(tmp);
 	
 	if(GYROSCOPE_RANGE == GYROSCOPE_RANGE_250) {
-        data[X]=(float) (tmp[X] - gyro_base[X]) / 131;
-        data[Y]=(float) (tmp[Y] - gyro_base[Y]) / 131;
-        data[Z]=(float) (tmp[Z] - gyro_base[Z]) / 131;
+        data[X]=(float) (tmp[X] - gyro_base[X]) / 131.0;
+        data[Y]=(float) (tmp[Y] - gyro_base[Y]) / 131.0;
+        data[Z]=(float) (tmp[Z] - gyro_base[Z]) / 131.0;
 	}
 	if(GYROSCOPE_RANGE == GYROSCOPE_RANGE_500) {
         data[X]=(float) (tmp[X] - gyro_base[X]) / 65.5;
@@ -243,16 +244,17 @@ void get_angles() {
 	get_gyro(gyro);
 	get_acc(acc);
 	
-	float acc_angle_x = acc[X];//atan(acc[X] / sqrt(pow(acc[Y],2) + pow(acc[Z],2))) * RAD_TO_DEG;
-	float acc_angle_y = acc[Y];//atan(acc[Y] / sqrt(pow(acc[X],2) + pow(acc[Z],2))) * RAD_TO_DEG;
-	float acc_angle_z = acc[Z];//atan(sqrt(pow(acc[X],2) + pow(acc[Y],2)) / acc[Z]) * RAD_TO_DEG;
+	float acc_angle_x = atan(acc[Y] / sqrt(pow(acc[X],2) + pow(acc[Z],2))) * RAD_TO_DEG; //acc[X];//
+	float acc_angle_y = atan(acc[X] / sqrt(pow(acc[Y],2) + pow(acc[Z],2))) * RAD_TO_DEG; //acc[Y];//
+	float acc_angle_z = 0; //atan(sqrt(pow(acc[X],2) + pow(acc[Y],2)) / acc[Z]) * RAD_TO_DEG; //acc[Z];//0; //
 	
-	/*filtered gyro angles */
-	//float dt = t_now - get_last_time(); // TODO must be implemented
-	float gyro_angle_x =  gyro[X]; // * dt + get_last_gyro_x_angle();
-	float gyro_angle_y =  gyro[Y]; //* dt + get_last_gyro_y_angle();
-	float gyro_angle_z =  gyro[Z]; //* dt * get_last_gyro_z_angle();
 	
+	/* Compute the filtered gyro angles */
+	float dt = (t_now - get_last_time()) / 1000.0;
+	float gyro_angle_x = (gyro[X] * dt) + get_last_filtert_x_angle();
+	float gyro_angle_y = (gyro[Y] * dt) + get_last_filtert_y_angle();
+	float gyro_angle_z = (gyro[Z] * dt) + get_last_filtert_z_angle();
+	/*
 	print("Gyro: x, y, z: ");
 	sprintf(tmp,"%f",gyro_angle_x);
 	for(int x = 0; x < 5; x++) {
@@ -285,30 +287,43 @@ void get_angles() {
 		pchar(tmp[x]);
 	}	
 	print("\n");
-	
+	*/
 	/* complementary Filter */
-	//const float alpha = 0.96;
-	//float angle_x = alpha * gyro_angle_x + (1.0 - alpha) * acc_angle_x;
-	//float angle_y = alpha * gyro_angle_y + (1.0 - alpha) * acc_angle_y;
-	//float angle_z = alpha * gyro_angle_z + (1.0 - alpha) * acc_angle_z;
+	const float alpha = 0.96;
+	float angle_x = alpha * gyro_angle_x + (1.0 - alpha) * acc_angle_x;
+	float angle_y = alpha * gyro_angle_y + (1.0 - alpha) * acc_angle_y;
+	float angle_z = gyro_angle_z;
+	
+	
+	print("x, y, z: ");
+	sprintf(tmp,"%f",angle_x);
+	for(int x = 0; x < 5; x++) {
+		pchar(tmp[x]);
+	}
+	print(", ");
+	sprintf(tmp,"%f",angle_y);
+	for(int x = 0; x < 5; x++) {
+		pchar(tmp[x]);
+	}
+	print(", ");
+	sprintf(tmp,"%f",angle_z);
+	for(int x = 0; x < 5; x++) {
+		pchar(tmp[x]);
+	}
+	print("\n");
 
-	//set_angle_data(t_now, angle_x, angle_y, angle_z, gyro_angle_x, gyro_angle_y, gyro_angle_z);
+	set_angle_data(t_now, angle_x, angle_y, angle_z);
+	
 }
 
-void set_angle_data(unsigned long time, float x_angle, float y_angle, float z_angle, float x_gyro_angle, float y_gyro_angle, float z_gyro_angle ) {
+void set_angle_data(unsigned long time, float x_angle, float y_angle, float z_angle ) {
 	timeStamp = time;
 	last_filtert_analge_x = x_angle;
 	last_filtert_analge_y = y_angle;
 	last_filtert_analge_z = z_angle;
-	last_gyro_angle_x = x_gyro_angle;
-	last_gyro_angle_y = y_gyro_angle;
-	last_gyro_angle_z = z_gyro_angle;
 }
 
 inline unsigned long get_last_time() {return timeStamp;}
 inline float get_last_filtert_x_angle() {return last_filtert_analge_x;}
 inline float get_last_filtert_y_angle() {return last_filtert_analge_y;}
 inline float get_last_filtert_z_angle() {return last_filtert_analge_z;}
-inline float get_last_gyro_x_angle() {return last_gyro_angle_x;}
-inline float get_last_gyro_y_angle() {return last_gyro_angle_y;}
-inline float get_last_gyro_z_angle() {return last_gyro_angle_z;}
