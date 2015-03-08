@@ -14,8 +14,9 @@
 float gyro[3];
 float acc[3];
 
-int16_t gyro_base[3];
-int16_t acc_base[3];
+/* for calibration */
+int gyro_base[3];
+int acc_base[3];
 
 /* Adress of the MPU6050 */
 #define ADR_MPU 0x68
@@ -56,5 +57,7 @@ int16_t get_temperature_raw();
 float get_temperature();
 void calibrate_gyroscope();
 void calibrate_accelerometer();
+void get_angles();
+
 
 #endif /* SENSOR_H_ */
