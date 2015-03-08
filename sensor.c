@@ -72,9 +72,11 @@ void init_sensor() {
     send_sensor_data(ADR_MPU,0x6A,0x88);
     /*sample rate*/
     //send_sensor_data(ADR_MPU,0x19,0x01);
-
-    send_sensor_data(ADR_MPU,0x6B,0x03); /*Power Management: GyroZ PLL Reference*/
-    send_sensor_data(ADR_MPU,0x1A,0x00); /*Configuration: Low-Pass: 256Hz*/
+	
+	/*Power Management: GyroZ PLL Reference*/
+    send_sensor_data(ADR_MPU,0x6B,0x03); 
+	/*Configuration: Low-Pass: 256Hz*/
+    send_sensor_data(ADR_MPU,0x1A,0x00); 
     /* ACCEL_CONFIG */
     send_sensor_data(ADR_MPU,0x1C,ACCELEROMETER_RANGE); 
     /* GYRO_CONFIG */
@@ -236,7 +238,6 @@ void calibrate_accelerometer() {
 }
 /*
  * calculate angles for x,y,z angles for pitch, raw, roll
- * TODO method not finished
  */
 void get_angles() {
     unsigned long t_now = get_millis();
@@ -246,9 +247,9 @@ void get_angles() {
     get_gyro(gyro);
     get_acc(acc);
     
-    float acc_angle_x = atan(acc[X] / sqrt(pow(acc[Y],2) + pow(acc[Z],2))) * RAD_TO_DEG; //acc[X];//
-    float acc_angle_y = atan(acc[Y] / sqrt(pow(acc[X],2) + pow(acc[Z],2))) * RAD_TO_DEG; //acc[Y];//
-    float acc_angle_z = 0; //atan(sqrt(pow(acc[X],2) + pow(acc[Y],2)) / acc[Z]) * RAD_TO_DEG; //acc[Z];//0; //
+    float acc_angle_x = atan(acc[X] / sqrt(pow(acc[Y],2) + pow(acc[Z],2))) * RAD_TO_DEG;
+    float acc_angle_y = atan(acc[Y] / sqrt(pow(acc[X],2) + pow(acc[Z],2))) * RAD_TO_DEG;
+    float acc_angle_z = 0; 
     
     
     /* Compute the filtered gyro angles */
@@ -259,9 +260,9 @@ void get_angles() {
  
     /* complementary Filter */
     const float alpha = 0.96;
-    float angle_x =alpha * gyro_angle_x + (1.0 - alpha) * acc_angle_x; //acc[X];; //
-    float angle_y =alpha * gyro_angle_y + (1.0 - alpha) * acc_angle_y; //acc[Y]; // 
-    float angle_z = gyro_angle_z; //acc[Z];// 
+    float angle_x =alpha * gyro_angle_x + (1.0 - alpha) * acc_angle_x; 
+    float angle_y =alpha * gyro_angle_y + (1.0 - alpha) * acc_angle_y; 
+    float angle_z = gyro_angle_z; 
     
 
     print("x, y, z: ");
@@ -282,7 +283,6 @@ void get_angles() {
     print("\n");
 
     set_angle_data(t_now, angle_x, angle_y, angle_z);
-    
 }
 
 void set_angle_data(unsigned long time, float x_angle, float y_angle, float z_angle ) {
