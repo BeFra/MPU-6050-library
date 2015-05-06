@@ -110,24 +110,24 @@ void get_acc(float* data) {
 	char tmpONE[10];
     get_acc_raw(tmp);
     if(ACCELEROMETER_RANGE == ACCELEROMETER_RANGE_2G) {
-        data[X]=(float) (tmp[X]) / 16384.0; //- acc_base[X]
-        data[Y]=(float) (tmp[Y]) / 16384.0; //- acc_base[Y]
-        data[Z]=(float) (tmp[Z]) / 16384.0; //- acc_base[Z]
+        data[X]=(float) tmp[X] / 16384.0; 
+        data[Y]=(float) tmp[Y] / 16384.0; 
+        data[Z]=(float) tmp[Z] / 16384.0; 
    }
     if(ACCELEROMETER_RANGE == ACCELEROMETER_RANGE_4G) {
-        data[X]=(float) (tmp[X]- acc_base[X]) / 8192.0;
-        data[Y]=(float) (tmp[Y]- acc_base[Y]) / 8192.0;
-        data[Z]=(float) (tmp[Z]- acc_base[Z]) / 8192.0;
+        data[X]=(float) tmp[X] / 8192.0;
+        data[Y]=(float) tmp[Y] / 8192.0;
+        data[Z]=(float) tmp[Z] / 8192.0;
     }
     if(ACCELEROMETER_RANGE == ACCELEROMETER_RANGE_8G) {
-        data[X]=(float) (tmp[X]- acc_base[X]) / 4096.0;
-        data[Y]=(float) (tmp[Y]- acc_base[Y]) / 4096.0;
-        data[Z]=(float) (tmp[Z]- acc_base[Z]) / 4096.0;
+        data[X]=(float) tmp[X] / 4096.0;
+        data[Y]=(float) tmp[Y] / 4096.0;
+        data[Z]=(float) tmp[Z] / 4096.0;
     }
     if(ACCELEROMETER_RANGE == ACCELEROMETER_RANGE_16G) {
-        data[X]=(float) (tmp[X]- acc_base[X]) / 2048.0;
-        data[Y]=(float) (tmp[Y]- acc_base[Y]) / 2048.0;
-        data[Z]=(float) (tmp[Z]- acc_base[Z]) / 2048.0;
+        data[X]=(float) tmp[X] / 2048.0;
+        data[Y]=(float) tmp[Y] / 2048.0;
+        data[Z]=(float) tmp[Z] / 2048.0;
     }   
 }
 
